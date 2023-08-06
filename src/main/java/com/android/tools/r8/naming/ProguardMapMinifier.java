@@ -368,6 +368,7 @@ public class ProguardMapMinifier {
 
     private final Map<DexType, DexString> mappings;
     private final Set<String> mappedNames;
+    private final boolean applyMappingOnly;
 
     ApplyMappingClassNamingStrategy(
         AppView<AppInfoWithLiveness> appView,
@@ -376,6 +377,7 @@ public class ProguardMapMinifier {
       super(appView);
       this.mappings = mappings;
       this.mappedNames = mappedNames;
+      this.applyMappingOnly = appView.options().getProguardConfiguration().isApplyMappingOnly();
     }
 
     @Override
@@ -409,7 +411,10 @@ public class ProguardMapMinifier {
       }
       if (clazz.isProgramClass()) {
         if (appView.appInfo().isMinificationAllowed(clazz.asProgramClass())) {
-          return mappings.get(type);
+          DexString mapping = mappings.get(type);
+          if (mapping != null || !applyMappingOnly) {
+            return mapping;
+          }
         }
         // TODO(b/136694827): Report a warning here if in the mapping since the user may find this
         //  non intuitive.
@@ -428,6 +433,7 @@ public class ProguardMapMinifier {
     private final Map<DexReference, MemberNaming> mappedNames;
     private final DexItemFactory factory;
     private final Reporter reporter;
+    private final boolean applyMappingOnly;
 
     public ApplyMappingMemberNamingStrategy(
         AppView<AppInfoWithLiveness> appView, Map<DexReference, MemberNaming> mappedNames) {
@@ -435,6 +441,7 @@ public class ProguardMapMinifier {
       this.mappedNames = mappedNames;
       this.factory = appView.dexItemFactory();
       this.reporter = appView.options().reporter;
+      this.applyMappingOnly = appView.options().getProguardConfiguration().isApplyMappingOnly();
     }
 
     @Override
@@ -512,7 +519,7 @@ public class ProguardMapMinifier {
       if (mappedNames.containsKey(reference)) {
         return factory.createString(mappedNames.get(reference).getRenamedName());
       }
-      return null;
+      return applyMappingOnly ? name : null;
     }
 
     @Override

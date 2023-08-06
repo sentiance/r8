@@ -190,7 +190,7 @@ public class ProguardConfigurationParser {
         reporter.info(
             new StringDiagnostic(
                 "Applying the obfuscation map (-applymapping) is disabled " + suffix));
-        configurationBuilder.setApplyMappingFile(null);
+        configurationBuilder.setApplyMappingFile(null, false);
       }
     }
   }
@@ -414,9 +414,12 @@ public class ProguardConfigurationParser {
         if (isOptionalArgumentGiven()) {
           configurationBuilder.setPrintMappingFile(parseFileName(false));
         }
+      } else if (acceptString("applymappingonly")) {
+        configurationBuilder.setApplyMappingFile(
+                parseFileInputDependency(inputDependencyConsumer::acceptProguardApplyMapping), true);
       } else if (acceptString("applymapping")) {
         configurationBuilder.setApplyMappingFile(
-            parseFileInputDependency(inputDependencyConsumer::acceptProguardApplyMapping));
+            parseFileInputDependency(inputDependencyConsumer::acceptProguardApplyMapping), false);
       } else if (acceptString("assumenosideeffects")) {
         ProguardAssumeNoSideEffectRule rule = parseAssumeNoSideEffectsRule(optionStart);
         configurationBuilder.addRule(rule);

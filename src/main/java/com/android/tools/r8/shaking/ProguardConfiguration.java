@@ -40,6 +40,7 @@ public class ProguardConfiguration {
     private boolean printMapping;
     private Path printMappingFile;
     private Path applyMappingFile;
+    private boolean applyMappingOnly;
     private boolean verbose;
     private String renameSourceFileAttribute;
     private final List<String> keepAttributePatterns = new ArrayList<>();
@@ -172,8 +173,9 @@ public class ProguardConfiguration {
       this.printMappingFile = file;
     }
 
-    public void setApplyMappingFile(Path file) {
+    public void setApplyMappingFile(Path file, boolean applyMappingOnly) {
       this.applyMappingFile = file;
+      this.applyMappingOnly = applyMappingOnly;
     }
 
     public boolean hasApplyMappingFile() {
@@ -328,6 +330,7 @@ public class ProguardConfiguration {
               printMapping,
               printMappingFile,
               applyMappingFile,
+              applyMappingOnly,
               verbose,
               renameSourceFileAttribute,
               ProguardKeepAttributes.fromPatterns(keepAttributePatterns),
@@ -387,6 +390,7 @@ public class ProguardConfiguration {
   private final boolean printMapping;
   private final Path printMappingFile;
   private final Path applyMappingFile;
+  private final boolean applyMappingOnly;
   private final boolean verbose;
   private final String renameSourceFileAttribute;
   private final ProguardKeepAttributes keepAttributes;
@@ -428,6 +432,7 @@ public class ProguardConfiguration {
       boolean printMapping,
       Path printMappingFile,
       Path applyMappingFile,
+      boolean applyMappingOnly,
       boolean verbose,
       String renameSourceFileAttribute,
       ProguardKeepAttributes keepAttributes,
@@ -467,6 +472,7 @@ public class ProguardConfiguration {
     this.printMapping = printMapping;
     this.printMappingFile = printMappingFile;
     this.applyMappingFile = applyMappingFile;
+    this.applyMappingOnly = applyMappingOnly;
     this.verbose = verbose;
     this.renameSourceFileAttribute = renameSourceFileAttribute;
     this.keepAttributes = keepAttributes;
@@ -536,6 +542,10 @@ public class ProguardConfiguration {
 
   public boolean hasApplyMappingFile() {
     return applyMappingFile != null;
+  }
+
+  public boolean isApplyMappingOnly() {
+    return applyMappingOnly;
   }
 
   public Path getApplyMappingFile() {
